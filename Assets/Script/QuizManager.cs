@@ -16,9 +16,8 @@ public class QuizManager : MonoBehaviour
 
     //Try to make a bool array to track what should be done for results
 
-    private void Start()
+    private void OnEnable()
     {
-            //For original splash page of Quiz - Question.Start.SetActive(false);
             
             GenerateQuestion();
     }
@@ -35,13 +34,12 @@ public class QuizManager : MonoBehaviour
         {
             rfTravel = true;
         } 
-        Q.RemoveAt(currentQuestion);
         GenerateQuestion();
     }  
 
     public void answerNo()
     {
-        Q.RemoveAt(currentQuestion);
+        
         GenerateQuestion();
     }
 
@@ -66,6 +64,8 @@ public class QuizManager : MonoBehaviour
             QuestionCanvas.SetActive(false);
             ResultHigh.SetActive(true);
         }
+
+        currentQuestion = 0;
     }
 
 
@@ -88,11 +88,12 @@ public class QuizManager : MonoBehaviour
 
     void GenerateQuestion()// Generates questions
     {
-        if(Q.Count > 0)
+        if(currentQuestion < Q.Count)
         {
                 Debug.Log("This is question " + Q.Count);
                 QuestionText.text = Q[currentQuestion].Question + "\n\n    " + Q[currentQuestion].option1+ "\n    " + Q[currentQuestion].option2+ "\n    " + Q[currentQuestion].option3 + "\n    " + Q[currentQuestion].option4;
                 SetAnswer();
+                currentQuestion++;
                 
                 
         }
