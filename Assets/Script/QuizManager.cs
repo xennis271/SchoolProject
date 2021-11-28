@@ -9,18 +9,14 @@ public class QuizManager : MonoBehaviour
     public GameObject[] options;
     public GameObject QuestionCanvas, ResultNone, ResultLow, ResultHigh;
      
-    public int currentQuestion;
+    public int currentQuestion = -999;
     public bool rfSymptoms = false;
     public bool rfTravel = false;
     public Text QuestionText;
 
     //Try to make a bool array to track what should be done for results
 
-    private void OnEnable()
-    {
-            
-            GenerateQuestion();
-    }
+    
 
     public void answerYes() //Helps continue to next question
     {
@@ -86,11 +82,11 @@ public class QuizManager : MonoBehaviour
 
     
 
-    void GenerateQuestion()// Generates questions
+    public void GenerateQuestion()// Generates questions
     {
         if(currentQuestion < Q.Count)
         {
-                Debug.Log("This is question " + Q.Count);
+                Debug.Log("This is question " + currentQuestion);
                 QuestionText.text = Q[currentQuestion].Question + "\n\n    " + Q[currentQuestion].option1+ "\n    " + Q[currentQuestion].option2+ "\n    " + Q[currentQuestion].option3 + "\n    " + Q[currentQuestion].option4;
                 SetAnswer();
                 currentQuestion++;
