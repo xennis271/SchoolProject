@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
+using System.Net;
+using System.Net.NetworkInformation;
+using System.Net.Sockets;
 
 public class WeatherTracker : MonoBehaviour
 {
@@ -17,6 +20,7 @@ public class WeatherTracker : MonoBehaviour
     public float lat,longer;
     public currentWeather Weather;
     public currentPollen Pollen;
+    public currentIpInfo IpInfo;
 
 
 
@@ -82,13 +86,33 @@ public class WeatherTracker : MonoBehaviour
         }
         //"message":"success","data":{
         string modString = "{\"" + www.downloadHandler.text.Remove(0,70);
-        modString = modString.Substring(0, modString.Length - 321);
+        // have to split based on ','
+        string[] partsOfModString = modString.Split(',');
+        modString = partsOfModString[0] + "," + partsOfModString[1] + "," + partsOfModString[2];
+        //modString = modString.Substring(0, modString.Length - 320);
         Debug.Log(modString);
         //DebugText.text = www.downloadHandler.text;
         
         
         Pollen = JsonUtility.FromJson<currentPollen>(modString);
         InfoText.text += 	"\nGrass pollen:" + Pollen.grass_pollen + "\nTree pollen:" + Pollen.tree_pollen + "\nWeed pollen" + Pollen.weed_pollen;
+        
+    }
+    private IEnumerator getALLinfo(){
+        Debug.Log("You asked for all the info");
+        string ip = new WebClient().DownloadString("http://icanhazip.com");
+        Debug.Log("Your Ip is:" + ip);
+        UnityWebRequest www = UnityWebRequest.Get("http://ip-api.com/json/" + ip);
+        yield return www.SendWebRequest();
+        Debug.Log(www.downloadHandler.text);
+
+        IpInfo = JsonUtility.FromJson<currentIpInfo>(www.downloadHandler.text);
+
+        StartCoroutine(getWeatherInfo(IpInfo.lat,IpInfo.lon));
+        StartCoroutine(getPollenInfo(IpInfo.lat,IpInfo.lon));
+        yield break;
+
+        
     }
    
 
@@ -117,12 +141,31 @@ public class WeatherTracker : MonoBehaviour
             if(!PulledInfo){
             PulledInfo = true;
             popUp.SetActive(false);
-            StartCoroutine(getWeatherInfo(lat,longer));
-            StartCoroutine(getPollenInfo(lat,longer));
+            //Debug.Log("About to ask for everything");
+            StartCoroutine(getALLinfo());
             }
             
         }
     }
+}
+
+[System.Serializable]
+public class currentIpInfo
+{
+    public string status;
+    public string country;
+    public string countryCode;
+    public string region;
+    public string regionName;
+    public string city;
+    public int zip;
+    public float lat;
+    public float lon;
+    public string timezone;
+    public string isp;
+    public string org;
+    public string tas;
+    public string query;
 }
 [System.Serializable]
 public class currentPollen
