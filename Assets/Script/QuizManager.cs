@@ -14,19 +14,18 @@ public class QuizManager : MonoBehaviour
     public bool rfTravel = false;
     public Text QuestionText;
 
-    //Try to make a bool array to track what should be done for results
 
     
 
     public void answerYes() //Helps continue to next question
     {
         
-        if(Q.Count > 1)
+        if(currentQuestion < 6)
         {
             
             rfSymptoms = true;
         }
-        else 
+        else
         {
             rfTravel = true;
         } 
@@ -62,6 +61,8 @@ public class QuizManager : MonoBehaviour
         }
 
         currentQuestion = 0;
+        rfSymptoms = false;
+        rfTravel = false;
     }
 
 
